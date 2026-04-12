@@ -729,6 +729,64 @@
       select.appendChild(other);
     }
   }
+
+  var form = document.getElementById('odooLeadForm');
+  var btn = document.getElementById('odooLeadSubmit');
+  var msg = document.getElementById('odooLeadMsg');
+  if (!form || !btn || !msg) return;
+
+  var urlParams = new URLSearchParams(window.location.search);
+  var utm = {
+    source: urlParams.get('utm_source') || '',
+    medium: urlParams.get('utm_medium') || '',
+    campaign: urlParams.get('utm_campaign') || '',
+  };
+
+  form.addEventListener('submit', async function (e) {
+    e.preventDefault();
+
+    btn.disabled = true;
+    btn.textContent = 'Sending...';
+    msg.textContent = '';
+    msg.className = 'lead-form__msg';
+
+    var payload = {
+      name: form.name.value.trim(),
+      phone: form.phone.value.trim(),
+      email: form.email.value.trim(),
+      service: form.service ? form.service.value : '',
+      address: form.address ? form.address.value.trim() : '',
+      preferred_date: form.preferred_date ? form.preferred_date.value : '',
+      message: form.message.value.trim(),
+      sms_consent: form.sms_consent.checked,
+      utm_source: utm.source || undefined,
+      utm_medium: utm.medium || undefined,
+      utm_campaign: utm.campaign || undefined
+    };
+
+    try {
+      var res = await fetch('/api/quote', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      var data = await res.json();
+
+      if (!res.ok || !data.success) {
+        throw new Error(data.error || 'Submission failed');
+      }
+
+      msg.textContent = data.message || "Thanks! We'll be in touch shortly.";
+      msg.className = 'lead-form__msg lead-form__msg--success';
+      form.reset();
+    } catch (err) {
+      msg.textContent = err.message || 'Something went wrong. Please call us directly.';
+      msg.className = 'lead-form__msg lead-form__msg--error';
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Send Request';
+    }
+  });
 })();
 </script>
 
