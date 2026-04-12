@@ -67,6 +67,10 @@ import json; d=json.load(open('$SITE_JSON'))
 print(d['_factory']['seo']['site_name'])
 ")
 
+# ── Step 0: Clean and recreate dist/ ───────────────────────────────────────
+rm -rf "$OUT_DIR"
+mkdir -p "$OUT_DIR"
+
 # ── Step 1: Firecrawl brand extraction (if configured) ─────────────────────
 BRAND_JSON=""
 if [[ -n "$FIRECRAWL_SOURCE" ]]; then
@@ -76,15 +80,7 @@ if [[ -n "$FIRECRAWL_SOURCE" ]]; then
   echo "    brand.json written"
 fi
 
-# ── Step 2: Apply brand tokens to variables.css ────────────────────────────
-echo "==> Applying brand tokens to $OUT_DIR/css/variables.css"
-python3 scripts/render.py apply-brand \
-  --site-json "$SITE_JSON" \
-  ${BRAND_JSON:+--brand-json "$BRAND_JSON"} \
-  --src css/variables.css \
-  --out "$OUT_DIR/css/variables.css"
-
-# ── Step 3: Determine extra script tags ───────────────────────────────────
+# ── Step 2: Determine extra script tags ────────────────────────────────────
 EXTRA_SCRIPTS=""
 if [[ "$ANIM_SCROLL" == "1" ]]; then
   EXTRA_SCRIPTS="$EXTRA_SCRIPTS\n  <script src=\"/js/scroll-timeline.js\" defer></script>"
@@ -93,18 +89,14 @@ if [[ "$ANIM_VIDEO" == "1" && -n "$VIDEO_SRC" ]]; then
   EXTRA_SCRIPTS="$EXTRA_SCRIPTS\n  <script src=\"/js/video-scrub.js\" defer></script>"
 fi
 
-# ── Step 4: Clean and recreate dist/ ──────────────────────────────────────
-rm -rf "$OUT_DIR"
-mkdir -p "$OUT_DIR"
-
-# ── Step 5: Assemble HTML pages ───────────────────────────────────────────
+# ── Step 3: Assemble HTML pages ────────────────────────────────────────────
 echo "==> Assembling pages..."
 python3 scripts/render.py assemble \
   --site-json "$SITE_JSON" \
   --extra-scripts "$EXTRA_SCRIPTS" \
   --out "$OUT_DIR"
 
-# ── Step 6: Copy static assets ───────────────────────────────────────────
+# ── Step 4: Copy static assets ─────────────────────────────────────────────
 for dir in css js assets; do
   if [[ -d "$dir" ]]; then
     cp -r "$dir" "$OUT_DIR/"
@@ -121,7 +113,15 @@ if [[ "$ANIM_VIDEO" == "1" ]]; then
   cp js/video-scrub.js "$OUT_DIR/js/video-scrub.js"
 fi
 
-# ── Step 7: Minify with esbuild ───────────────────────────────────────────
+# ── Step 5: Apply brand tokens to copied variables.css ─────────────────────
+echo "==> Applying brand tokens to $OUT_DIR/css/variables.css"
+python3 scripts/render.py apply-brand \
+  --site-json "$SITE_JSON" \
+  ${BRAND_JSON:+--brand-json "$BRAND_JSON"} \
+  --src css/variables.css \
+  --out "$OUT_DIR/css/variables.css"
+
+# ── Step 6: Minify with esbuild ────────────────────────────────────────────
 ESBUILD="node_modules/.bin/esbuild"
 if [[ -f "$ESBUILD" ]]; then
   echo "==> Minifying..."
@@ -133,7 +133,7 @@ else
   echo "  (esbuild not installed — skip minification. Run: npm install)"
 fi
 
-# ── Step 8: Generate sitemap ─────────────────────────────────────────────
+# ── Step 7: Generate sitemap ───────────────────────────────────────────────
 echo "==> Generating sitemap.xml..."
 python3 scripts/render.py sitemap \
   --base-url "$BASE_URL" \

@@ -11,6 +11,7 @@ All sub-commands read site.json for configuration.
 """
 # STUB:TDD — integration tested via test_build.sh smoke test
 import argparse
+import html
 import json
 import os
 import re
@@ -66,27 +67,43 @@ def inject_head_extras(html, extra_scripts, factory):
         inject += '\n  <link rel="preconnect" href="https://fonts.googleapis.com">'
         inject += f'\n  <link href="{fonts_url}" rel="stylesheet">'
     if extra_scripts:
-        inject += extra_scripts
+        inject += extra_scripts.replace("\\n", "\n")
 
     if inject:
         html = html.replace("</head>", inject + "\n</head>", 1)
     return html
 
-def apply_cms_tokens(html, site_data):
-    """Replace data-cms="key.subkey" values with site.json content."""
-    def replacer(m):
-        key_path = m.group(1)
-        parts = key_path.split(".")
-        val = site_data
-        for p in parts:
-            if isinstance(val, dict):
-                val = val.get(p, "")
-            else:
-                val = ""
-                break
-        return str(val) if val else m.group(0)  # leave unchanged if missing
+def resolve_cms_value(site_data, key_path):
+    """Resolve dotted paths across dicts and lists."""
+    val = site_data
+    for part in key_path.split("."):
+        if isinstance(val, dict):
+            val = val.get(part, "")
+        elif isinstance(val, list) and part.isdigit():
+            index = int(part)
+            val = val[index] if 0 <= index < len(val) else ""
+        else:
+            return ""
+    return val
 
-    return re.sub(r'data-cms="([^"]+)"', lambda m: replacer(m), html)
+
+def apply_cms_tokens(html_doc, site_data):
+    """Populate elements marked with data-cms using site.json content."""
+    pattern = re.compile(
+        r"<(?P<tag>[a-zA-Z0-9:-]+)(?P<before>[^>]*)\sdata-cms=\"(?P<key>[^\"]+)\"(?P<after>[^>]*)>(?P<inner>.*?)</(?P=tag)>",
+        re.DOTALL,
+    )
+
+    def replacer(match):
+        value = resolve_cms_value(site_data, match.group("key"))
+        if value in ("", None):
+            return match.group(0)
+
+        attrs = f"{match.group('before')}{match.group('after')}"
+        rendered = html.escape(str(value))
+        return f"<{match.group('tag')}{attrs}>{rendered}</{match.group('tag')}>"
+
+    return pattern.sub(replacer, html_doc)
 
 
 # ───────────────────────────────────────────────────────────���─────────────────
@@ -121,7 +138,8 @@ def cmd_assemble(args):
 
         # Inject lead form runtime config if module enabled
         if factory.get("modules", {}).get("odoo_lead_form"):
-            lf = factory.get("lead_form", {})
+            # Lead form content lives at the site root, not inside _factory.
+            lf = site_data.get("lead_form", {})
             lf_archetype = lf.get("archetype_fields", factory.get("archetype", "service"))
             services_json = json.dumps(lf.get("services", []))
             snippet = (
@@ -155,8 +173,11 @@ def cmd_apply_brand(args):
     # brand.json from Firecrawl can override site.json brand tokens
     if args.brand_json and os.path.exists(args.brand_json):
         extracted = load_json(args.brand_json)
-        for key in ("accent_color", "accent_hover", "gold_color", "gold_hover",
-                    "font_headline", "font_body", "google_fonts_url"):
+        if extracted.get("extracted_colors"):
+            for key in ("accent_color", "accent_hover", "gold_color", "gold_hover"):
+                if extracted.get(key):
+                    brand[key] = extracted[key]
+        for key in ("font_headline", "font_body", "google_fonts_url"):
             if extracted.get(key):
                 brand[key] = extracted[key]
 
@@ -184,13 +205,13 @@ def cmd_apply_brand(args):
     if brand.get("font_headline"):
         css = re.sub(
             r"(--font-headline:\s+')[^']+(')",
-            rf"\g<1>{brand['font_headline']}, system-ui, -apple-system, sans-serif\g<2>",
+            rf"\g<1>{brand['font_headline']}\g<2>",
             css,
         )
     if brand.get("font_body"):
         css = re.sub(
             r"(--font-body:\s+')[^']+(')",
-            rf"\g<1>{brand['font_body']}, system-ui, -apple-system, sans-serif\g<2>",
+            rf"\g<1>{brand['font_body']}\g<2>",
             css,
         )
 

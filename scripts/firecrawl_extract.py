@@ -30,7 +30,7 @@ def load_api_key():
 def firecrawl_scrape(url, api_key):
     payload = json.dumps({
         "url": url,
-        "formats": ["html", "metadata"],
+        "formats": ["html", "rawHtml"],
         "actions": []
     }).encode()
 
