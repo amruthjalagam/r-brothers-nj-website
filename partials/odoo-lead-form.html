@@ -1,0 +1,245 @@
+<!--
+  partials/odoo-lead-form.html
+  data-module="odoo-lead-form"
+  Archetype-aware: service | medical | artist
+  Wires to: /api/quote (functions/api/quote.js)
+  Build node sets: window.LEAD_FORM_ARCHETYPE, window.LEAD_FORM_SERVICES
+-->
+<section class="lead-form-section" id="odoo-quote" data-module="odoo-lead-form">
+  <div class="lead-form-container">
+    <h2 class="lead-form__title" data-cms="odoo_lead_form.title">Get in Touch</h2>
+    <p class="lead-form__sub" data-cms="odoo_lead_form.subtitle">Fill out the form and we'll respond within a few hours.</p>
+
+    <form id="odooLeadForm" class="lead-form" novalidate>
+
+      <!-- ── Core fields (all archetypes) ──────────────────────── -->
+      <div class="lead-form__row">
+        <div class="lead-form__field">
+          <label for="olf-name">Name *</label>
+          <input type="text" id="olf-name" name="name" required autocomplete="name">
+        </div>
+        <div class="lead-form__field">
+          <label for="olf-phone">Phone</label>
+          <input type="tel" id="olf-phone" name="phone" autocomplete="tel">
+        </div>
+      </div>
+
+      <div class="lead-form__field">
+        <label for="olf-email">Email</label>
+        <input type="email" id="olf-email" name="email" autocomplete="email">
+      </div>
+
+      <!-- ── Service archetype fields ───────────────────────────── -->
+      <div class="lead-form__archetype-fields" data-archetype="service" style="display:none">
+        <div class="lead-form__row">
+          <div class="lead-form__field">
+            <label for="olf-service">Service *</label>
+            <select id="olf-service" name="service">
+              <option value="" disabled selected>Select a service&hellip;</option>
+              <!-- Populated by window.LEAD_FORM_SERVICES at runtime -->
+            </select>
+          </div>
+          <div class="lead-form__field">
+            <label for="olf-address">Address</label>
+            <input type="text" id="olf-address" name="address" autocomplete="street-address">
+          </div>
+        </div>
+        <div class="lead-form__field">
+          <label for="olf-date">Preferred Date</label>
+          <input type="date" id="olf-date" name="preferred_date">
+        </div>
+      </div>
+
+      <!-- ── Medical archetype fields ──────────────────────────── -->
+      <div class="lead-form__archetype-fields" data-archetype="medical" style="display:none">
+        <div class="lead-form__row">
+          <div class="lead-form__field">
+            <label for="olf-insurance">Insurance Provider</label>
+            <input type="text" id="olf-insurance" name="insurance">
+          </div>
+          <div class="lead-form__field">
+            <label for="olf-visit-type">Visit Type *</label>
+            <select id="olf-visit-type" name="visit_type">
+              <option value="" disabled selected>Select&hellip;</option>
+              <option value="new">New Patient</option>
+              <option value="returning">Returning Patient</option>
+              <option value="consultation">Consultation</option>
+            </select>
+          </div>
+        </div>
+        <div class="lead-form__field">
+          <label for="olf-reason">Reason for Visit</label>
+          <textarea id="olf-reason" name="reason" rows="2"></textarea>
+        </div>
+      </div>
+
+      <!-- ── Artist archetype fields ───────────────────────────── -->
+      <div class="lead-form__archetype-fields" data-archetype="artist" style="display:none">
+        <div class="lead-form__row">
+          <div class="lead-form__field">
+            <label for="olf-project">Project Type</label>
+            <input type="text" id="olf-project" name="project_type" placeholder="e.g. wedding, corporate, birthday">
+          </div>
+          <div class="lead-form__field">
+            <label for="olf-budget">Budget Range</label>
+            <select id="olf-budget" name="budget_range">
+              <option value="" disabled selected>Select&hellip;</option>
+              <option value="under_500">Under $500</option>
+              <option value="500_1500">$500 – $1,500</option>
+              <option value="1500_3000">$1,500 – $3,000</option>
+              <option value="over_3000">$3,000+</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Notes (all archetypes) ────────────────────────────── -->
+      <div class="lead-form__field">
+        <label for="olf-message">Notes</label>
+        <textarea id="olf-message" name="message" rows="3"></textarea>
+      </div>
+
+      <!-- ── SMS consent ───────────────────────────────────────── -->
+      <div class="lead-form__field lead-form__field--checkbox">
+        <input type="checkbox" id="olf-sms" name="sms_consent" value="yes">
+        <label for="olf-sms" data-cms="odoo_lead_form.sms_consent">I agree to receive text messages about my request. Reply STOP to opt out.</label>
+      </div>
+
+      <button type="submit" class="lead-form__btn" id="odooLeadSubmit" data-cms="odoo_lead_form.cta">Send Request</button>
+      <p id="odooLeadMsg" class="lead-form__msg" aria-live="polite"></p>
+
+    </form>
+  </div>
+</section>
+
+<script>
+(function () {
+  var archetype = (window.LEAD_FORM_ARCHETYPE || 'service').toLowerCase();
+  var services  = window.LEAD_FORM_SERVICES || [];
+
+  // Show the right archetype block
+  document.querySelectorAll('.lead-form__archetype-fields').forEach(function (el) {
+    el.style.display = (el.dataset.archetype === archetype) ? '' : 'none';
+  });
+
+  // Populate service select if archetype === service
+  if (archetype === 'service') {
+    var select = document.getElementById('olf-service');
+    if (select && services.length) {
+      services.forEach(function (svc) {
+        var opt = document.createElement('option');
+        opt.value = svc;
+        opt.textContent = svc;
+        select.appendChild(opt);
+      });
+      // Add generic fallback
+      var other = document.createElement('option');
+      other.value = 'Other';
+      other.textContent = 'Other / Not Sure';
+      select.appendChild(other);
+    }
+  }
+})();
+</script>
+
+<style>
+.lead-form-section {
+  padding: 3rem 1rem;
+  background: #0d1117;
+}
+.lead-form-container {
+  max-width: 640px;
+  margin: 0 auto;
+}
+.lead-form__title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #f0f6fc;
+  margin: 0 0 0.5rem;
+}
+.lead-form__sub {
+  color: #8b949e;
+  margin: 0 0 2rem;
+  font-size: 0.95rem;
+}
+.lead-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+.lead-form__row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+@media (max-width: 520px) {
+  .lead-form__row { grid-template-columns: 1fr; }
+}
+.lead-form__field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+.lead-form__field label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #c9d1d9;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.lead-form__field input,
+.lead-form__field select,
+.lead-form__field textarea {
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 6px;
+  color: #f0f6fc;
+  font-size: 1rem;
+  padding: 0.65rem 0.85rem;
+  transition: border-color 0.15s;
+  font-family: inherit;
+  width: 100%;
+  box-sizing: border-box;
+}
+.lead-form__field input:focus,
+.lead-form__field select:focus,
+.lead-form__field textarea:focus {
+  outline: none;
+  border-color: #58a6ff;
+}
+.lead-form__field--checkbox {
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 0.6rem;
+}
+.lead-form__field--checkbox input[type="checkbox"] {
+  width: auto;
+  margin-top: 0.15rem;
+  flex-shrink: 0;
+}
+.lead-form__field--checkbox label {
+  font-size: 0.8rem;
+  text-transform: none;
+  letter-spacing: 0;
+  color: #8b949e;
+  font-weight: 400;
+}
+.lead-form__btn {
+  background: #238636;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.85rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, opacity 0.15s;
+  align-self: flex-start;
+  min-width: 160px;
+}
+.lead-form__btn:hover { background: #2ea043; }
+.lead-form__btn:disabled { opacity: 0.6; cursor: not-allowed; }
+.lead-form__msg { font-size: 0.9rem; min-height: 1.4em; margin: 0; }
+.lead-form__msg--success { color: #3fb950; }
+.lead-form__msg--error   { color: #f85149; }
+</style>

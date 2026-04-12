@@ -1,0 +1,172 @@
+{
+  "_factory": {
+    "schema_version": "2",
+    "archetype": "service",
+    "industry": "landscaping",
+    "template_variant": "service-a",
+    "firecrawl_source": "",
+    "pages": [
+      "index", "about", "services", "contact", "faq", "gallery"
+    ],
+    "modules": {
+      "odoo_lead_form": true,
+      "odoo_calendar": false,
+      "odoo_invoice": false,
+      "odoo_reviews": false,
+      "social_feed": false,
+      "patient_intake": false
+    },
+    "animations": {
+      "scroll_timeline": true,
+      "video_scrub": false,
+      "video_src": "",
+      "reduced_motion_fallback": true
+    },
+    "brand": {
+      "accent_color": "#2563eb",
+      "accent_hover": "#1d4ed8",
+      "gold_color": "#f59e0b",
+      "gold_hover": "#d97706",
+      "font_headline": "Space Grotesk",
+      "font_body": "Inter",
+      "google_fonts_url": "https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Inter:wght@400;500;600&display=swap"
+    },
+    "seo": {
+      "base_url": "https://example.com",
+      "site_name": "Site Name",
+      "og_image": "/assets/og-image.jpg"
+    },
+    "lead_form": {
+      "archetype_fields": "service",
+      "services": ["Service 1", "Service 2", "Service 3"]
+    },
+    "deploy": {
+      "cloudflare_project": "",
+      "github_repo": "",
+      "custom_domain": ""
+    }
+  },
+  "brand": {
+    "name": "Green Haven Landscaping",
+    "headline": "Outdoor spaces kept sharp year-round",
+    "logo_letter": "G",
+    "logo_rest": "H",
+    "footer_blurb": "Outdoor spaces kept sharp year-round across the Denver metro."
+  },
+  "homepage": {
+    "hero_eyebrow": "Trusted across the Denver metro",
+    "hero_title": "Lawn care and landscape upkeep without the hassle",
+    "hero_subtitle": "Weekly maintenance, seasonal cleanups, and curb-appeal upgrades delivered by a reliable local crew.",
+    "hero_cta": "Get a Free Quote",
+    "stat1_number": "100+",
+    "stat1_label": "Jobs Completed",
+    "stat2_number": "5★",
+    "stat2_label": "Average Rating",
+    "stat3_number": "5+",
+    "stat3_label": "Years Experience",
+    "stat4_number": "100%",
+    "stat4_label": "Satisfaction",
+    "services_heading": "Our Services",
+    "services_intro": "Weekly maintenance, cleanup work, and curb-appeal upgrades handled by one reliable crew.",
+    "service1_title": "Routine Lawn Maintenance",
+    "service1_desc": "Scheduled mowing, edging, trimming, and cleanup to keep your yard consistently sharp.",
+    "service2_title": "Seasonal Yard Cleanups",
+    "service2_desc": "Spring and fall visits that clear debris, refresh beds, and reset your outdoor space.",
+    "service3_title": "Landscape Refreshes",
+    "service3_desc": "Mulch, plantings, pruning, and detail work that improve curb appeal fast.",
+    "about_heading": "Why Choose Us",
+    "about_body": "Green Haven Landscaping helps busy homeowners keep their yards clean, healthy, and presentation-ready without chasing down unreliable crews. Our team is insured, detail-oriented, and focused on consistent results from the first visit to the last.",
+    "review1_text": "Excellent service, highly professional. Would recommend to anyone.",
+    "review1_name": "Sarah M.",
+    "review1_meta": "Google Review",
+    "review2_text": "Outstanding results. Will definitely be using them again.",
+    "review2_name": "Jordan T.",
+    "review2_meta": "Google Review",
+    "review3_text": "Fast, reliable, and thorough. Exactly what I needed.",
+    "review3_name": "Melissa R.",
+    "review3_meta": "Google Review",
+    "cta_heading": "Ready to Get Started?",
+    "cta_subtext": "Contact us today for a free, no-obligation quote.",
+    "gallery": []
+  },
+  "about": {
+    "page_title": "About Us",
+    "subtitle": "Local. Reliable. Detail-driven.",
+    "body": "<p>Green Haven Landscaping was built for homeowners who want dependable yard care without the usual no-shows and rushed work. We started by helping neighbors with routine lawn upkeep and quickly grew into a crew known for clean lines, clear communication, and consistent follow-through.</p><p>Today we handle recurring maintenance, seasonal cleanups, and small landscape refreshes across the Denver metro. We keep our service list focused so every job gets the same level of attention and the same standard of finish.</p>",
+    "values_heading": "Our Values",
+    "value1_title": "Quality",
+    "value1_desc": "We never cut corners. Every job gets our full attention.",
+    "value2_title": "Reliability",
+    "value2_desc": "We show up when we say we will. Your time matters.",
+    "value3_title": "Transparency",
+    "value3_desc": "Honest pricing, no hidden fees.",
+    "team_heading": "Meet the Team",
+    "years_in_business": "5+",
+    "jobs_completed": "500+",
+    "happy_clients": "500+"
+  },
+  "services": {
+    "page_title": "Our Services",
+    "intro": "Recurring care and one-time cleanup work with straightforward pricing.",
+    "cat1_eyebrow": "Core Plans",
+    "cat1_heading": "Lawn and Property Care",
+    "cat1_intro": "Choose the level of upkeep that fits your property and schedule.",
+    "pkg1_name": "Essential Weekly Care",
+    "pkg1_price": "$85",
+    "pkg1_desc": "Mowing, edging, trimming, and blow-off for small to midsize residential lots.",
+    "pkg2_name": "Signature Yard Care",
+    "pkg2_price": "$145",
+    "pkg2_desc": "Weekly maintenance plus bed detailing, hedge touch-ups, and seasonal adjustments.",
+    "pkg3_name": "Full-Service Exterior Care",
+    "pkg3_price": "$245",
+    "pkg3_desc": "Comprehensive upkeep for larger properties with priority scheduling and detail work.",
+    "cat2_eyebrow": "Extras",
+    "cat2_heading": "Seasonal and Add-On Services",
+    "cat2_intro": "One-time visits and upgrade work for the moments your yard needs extra attention.",
+    "addon1_name": "Spring or Fall Cleanup",
+    "addon1_price": "$129",
+    "addon1_desc": "Leaf removal, cutbacks, debris haul-off, and a clean reset for the season.",
+    "addon2_name": "Mulch and Bed Refresh",
+    "addon2_price": "$179",
+    "addon2_desc": "Fresh mulch, bed edging, and visual cleanup to improve curb appeal quickly.",
+    "step1_title": "Request a Quote",
+    "step1_desc": "Fill out our contact form or call us. We respond within hours.",
+    "step2_title": "We Get to Work",
+    "step2_desc": "Our team shows up on time and delivers as promised.",
+    "step3_title": "You're Satisfied",
+    "step3_desc": "We don't leave until you're happy with the result."
+  },
+  "contact": {
+    "page_title": "Get a Free Quote",
+    "page_intro": "Fill out the form and we'll respond within a few hours.",
+    "phone": "(720) 555-0148",
+    "email": "hello@greenhavenlandscaping.com",
+    "address": "Serving Denver, Lakewood, Littleton, and nearby communities",
+    "hours": "Mon–Sat 8am–6pm"
+  },
+  "gallery": {
+    "page_title": "Our Work",
+    "page_intro": "Browse completed jobs from our team.",
+    "images": []
+  },
+  "faq": {
+    "page_title": "Frequently Asked Questions",
+    "page_intro": "Everything you need to know before booking.",
+    "q1": "How much does it cost?",
+    "a1": "Pricing depends on the service and scope. We provide free quotes — contact us for an exact price.",
+    "q2": "How long does it take?",
+    "a2": "Timing varies by service. We'll give you an estimate when you book.",
+    "q3": "What areas do you serve?",
+    "a3": "We serve Denver, Lakewood, Littleton, and nearby communities across the metro area.",
+    "q4": "Are you insured?",
+    "a4": "Yes, we are fully insured. Your property is protected.",
+    "q5": "How do I pay?",
+    "a5": "We accept cash, check, and all major credit cards.",
+    "q6": "Do I need to be home?",
+    "a6": "For most services, no. We'll coordinate access and keep you updated."
+  },
+  "_meta": {
+    "last_updated": "",
+    "updated_by": "admin"
+  }
+}

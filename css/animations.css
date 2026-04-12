@@ -1,0 +1,82 @@
+/* ----------------------------------------------------------
+   Scroll Timeline — CSS animation-timeline: scroll() / view()
+   Active only when .scroll-timeline-supported is on <html>.
+   Falls back to IntersectionObserver animations above.
+   ---------------------------------------------------------- */
+
+/* view() entrance — fade up as element enters viewport */
+.html.scroll-timeline-supported .st-fade-up,
+:root.scroll-timeline-supported .st-fade-up {
+  animation: st-fade-up-kf linear both;
+  animation-timeline: view();
+  animation-range: entry 0% entry 60%;
+}
+
+@keyframes st-fade-up-kf {
+  from { opacity: 0; transform: translateY(2.5rem); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* view() entrance — scale in */
+:root.scroll-timeline-supported .st-scale-in {
+  animation: st-scale-in-kf linear both;
+  animation-timeline: view();
+  animation-range: entry 0% entry 60%;
+}
+
+@keyframes st-scale-in-kf {
+  from { opacity: 0; transform: scale(0.9); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* scroll() parallax — hero background layer */
+:root.scroll-timeline-supported .st-parallax-bg {
+  animation: st-parallax-bg-kf linear both;
+  animation-timeline: scroll(root);
+  will-change: transform;
+}
+
+@keyframes st-parallax-bg-kf {
+  from { transform: translateY(0); }
+  to   { transform: translateY(calc(var(--parallax-speed, 0.3) * -20vh)); }
+}
+
+/* Stagger delay for .stagger-scroll children (index set by scroll-timeline.js) */
+:root.scroll-timeline-supported .stagger-scroll > * {
+  animation-delay: var(--stagger-delay, 0ms);
+}
+
+/* scroll() progress bar — purely decorative */
+:root.scroll-timeline-supported .scroll-progress-bar {
+  transform-origin: left;
+  animation: scroll-progress-grow linear;
+  animation-timeline: scroll(root);
+}
+
+@keyframes scroll-progress-grow {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+
+/* Video scrub zone — sticky wrapper */
+.video-scrub-zone {
+  position: relative;
+}
+
+.video-scrub-zone__sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-bg-primary);
+}
+
+.video-scrub-zone__video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
