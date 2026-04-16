@@ -138,13 +138,10 @@ def cmd_assemble(args):
 
         # Inject lead form runtime config if module enabled
         if factory.get("modules", {}).get("odoo_lead_form"):
-            # Lead form content lives at the site root, not inside _factory.
             lf = site_data.get("lead_form", {})
-            lf_archetype = lf.get("archetype_fields", factory.get("archetype", "service"))
             services_json = json.dumps(lf.get("services", []))
             snippet = (
                 '\n<script>'
-                'window.LEAD_FORM_ARCHETYPE="' + lf_archetype + '";'
                 'window.LEAD_FORM_SERVICES=' + services_json + ';'
                 '</script>'
             )

@@ -41,19 +41,20 @@ for page in $PAGES; do
   fi
 done
 
-# ── Check 2: No unresolved placeholders ─────────────────────────────
+# ── Check 2: No unresolved placeholders or TODO text ───────────────
 UNRESOLVED=$(python3 -c "
 import os, re
 issues = []
+pattern = re.compile(r'<!-- MODULE:|<!-- HEADER -->|<!-- FOOTER -->|\\bplaceholder\\b|\\btodo\\b', re.IGNORECASE)
 for f in os.listdir('$OUT_DIR'):
     if not f.endswith('.html'): continue
     c = open('$OUT_DIR/' + f).read()
-    for pat in ['<!-- MODULE:', '<!-- HEADER -->', '<!-- FOOTER -->']:
-        if pat in c:
-            issues.append(f + ': ' + pat)
+    matches = pattern.findall(c)
+    if matches:
+        issues.append(f + ': ' + ', '.join(sorted(set(matches))))
 print(';'.join(issues) if issues else 'ok')
 ")
-check "no unresolved placeholders" "$([[ "$UNRESOLVED" == "ok" ]] && echo pass || echo "$UNRESOLVED")"
+check "no unresolved placeholders or TODO text" "$([[ "$UNRESOLVED" == "ok" ]] && echo pass || echo "$UNRESOLVED")"
 
 # ── Check 3: sitemap.xml generated ──────────────────────────────────
 check "sitemap.xml exists" "$([[ -f "$OUT_DIR/sitemap.xml" ]] && echo pass || echo 'missing')"

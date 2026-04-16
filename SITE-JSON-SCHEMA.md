@@ -27,18 +27,18 @@
 | brand.font_headline | string | font name | Google Fonts family name for --font-headline |
 | brand.font_body | string | font name | Google Fonts family name for --font-body |
 | brand.google_fonts_url | string | URL | Full ?family= Google Fonts URL |
-| seo.base_url | string | https://... | Used in sitemap.xml and canonical tags |
+| seo.base_url | string | e.g. https://rbrothersnj.com | Used in sitemap.xml and canonical tags |
 | seo.site_name | string | text | Used in <title> suffix and OG tags |
 | seo.og_image | string | path | Relative path to OG share image |
 | lead_form.archetype_fields | string | "service" \| "medical" \| "artist" | Controls which lead form field set is rendered |
 | lead_form.services | array[string] | service names | Populates <select> options in the lead form |
 | deploy.cloudflare_project | string | CF project name | Used by deploy step |
 | deploy.github_repo | string | owner/repo | Used by deploy step |
-| deploy.custom_domain | string | domain or "" | Used by deploy step |
+| deploy.custom_domain | string | e.g. rbrothersnj.com or "" | Used by deploy step |
 
 ## Content keys (unchanged from v1)
 brand, homepage, about, services, contact, gallery, faq — exact same structure as v1.
-See content/site.json for a complete filled example (Green Haven Landscaping).
+See content/site.json for a complete filled example (R Brothers Outdoor Services).
 
 ## Notes
 - All boolean flags default to false. Explicitly set true only for modules the client needs.

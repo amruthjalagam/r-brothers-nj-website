@@ -489,9 +489,9 @@
     <!--
   partials/odoo-lead-form.html
   data-module="odoo-lead-form"
-  Archetype-aware: service | medical | artist
+  Service-site quote form for R Brothers Outdoor Services
   Wires to: /api/quote (functions/api/quote.js)
-  Build node sets: window.LEAD_FORM_ARCHETYPE, window.LEAD_FORM_SERVICES
+  Build node sets: window.LEAD_FORM_SERVICES
 -->
 <section class="lead-form-section" id="odoo-quote" data-module="odoo-lead-form">
   <div class="lead-form-container">
@@ -500,7 +500,7 @@
 
     <form id="odooLeadForm" class="lead-form" novalidate>
 
-      <!-- ── Core fields (all archetypes) ──────────────────────── -->
+      <!-- ── Contact details ───────────────────────────────────── -->
       <div class="lead-form__row">
         <div class="lead-form__field">
           <label for="olf-name">Name *</label>
@@ -517,77 +517,29 @@
         <input type="email" id="olf-email" name="email" autocomplete="email">
       </div>
 
-      <!-- ── Service archetype fields ───────────────────────────── -->
-      <div class="lead-form__archetype-fields" data-archetype="service" style="display:none">
-        <div class="lead-form__row">
-          <div class="lead-form__field">
-            <label for="olf-service">Service *</label>
-            <select id="olf-service" name="service">
-              <option value="" disabled selected>Select a service&hellip;</option>
-              <!-- Populated by window.LEAD_FORM_SERVICES at runtime -->
-            </select>
-          </div>
-          <div class="lead-form__field">
-            <label for="olf-address">Address</label>
-            <input type="text" id="olf-address" name="address" autocomplete="street-address">
-          </div>
+      <div class="lead-form__row">
+        <div class="lead-form__field">
+          <label for="olf-service">Service *</label>
+          <select id="olf-service" name="service" required>
+            <option value="" disabled selected>Select a service&hellip;</option>
+            <!-- Populated by window.LEAD_FORM_SERVICES at runtime -->
+          </select>
         </div>
         <div class="lead-form__field">
-          <label for="olf-date">Preferred Date</label>
-          <input type="date" id="olf-date" name="preferred_date">
+          <label for="olf-address">Address</label>
+          <input type="text" id="olf-address" name="address" autocomplete="street-address">
         </div>
       </div>
-
-      <!-- ── Medical archetype fields ──────────────────────────── -->
-      <div class="lead-form__archetype-fields" data-archetype="medical" style="display:none">
-        <div class="lead-form__row">
-          <div class="lead-form__field">
-            <label for="olf-insurance">Insurance Provider</label>
-            <input type="text" id="olf-insurance" name="insurance">
-          </div>
-          <div class="lead-form__field">
-            <label for="olf-visit-type">Visit Type *</label>
-            <select id="olf-visit-type" name="visit_type">
-              <option value="" disabled selected>Select&hellip;</option>
-              <option value="new">New Patient</option>
-              <option value="returning">Returning Patient</option>
-              <option value="consultation">Consultation</option>
-            </select>
-          </div>
-        </div>
-        <div class="lead-form__field">
-          <label for="olf-reason">Reason for Visit</label>
-          <textarea id="olf-reason" name="reason" rows="2"></textarea>
-        </div>
+      <div class="lead-form__field">
+        <label for="olf-date">Preferred Date</label>
+        <input type="date" id="olf-date" name="preferred_date">
       </div>
 
-      <!-- ── Artist archetype fields ───────────────────────────── -->
-      <div class="lead-form__archetype-fields" data-archetype="artist" style="display:none">
-        <div class="lead-form__row">
-          <div class="lead-form__field">
-            <label for="olf-project">Project Type</label>
-            <input type="text" id="olf-project" name="project_type" placeholder="e.g. wedding, corporate, birthday">
-          </div>
-          <div class="lead-form__field">
-            <label for="olf-budget">Budget Range</label>
-            <select id="olf-budget" name="budget_range">
-              <option value="" disabled selected>Select&hellip;</option>
-              <option value="under_500">Under $500</option>
-              <option value="500_1500">$500 – $1,500</option>
-              <option value="1500_3000">$1,500 – $3,000</option>
-              <option value="over_3000">$3,000+</option>
-            </select>
-          </div>
-        </div>
-      </div>
-
-      <!-- ── Notes (all archetypes) ────────────────────────────── -->
       <div class="lead-form__field">
         <label for="olf-message">Notes</label>
         <textarea id="olf-message" name="message" rows="3"></textarea>
       </div>
 
-      <!-- ── SMS consent ───────────────────────────────────────── -->
       <div class="lead-form__field lead-form__field--checkbox">
         <input type="checkbox" id="olf-sms" name="sms_consent" value="yes">
         <label for="olf-sms">I agree to receive text updates about my request. Reply STOP to opt out.</label>
@@ -602,30 +554,21 @@
 
 <script>
 (function () {
-  var archetype = (window.LEAD_FORM_ARCHETYPE || 'service').toLowerCase();
   var services  = window.LEAD_FORM_SERVICES || [];
 
-  // Show the right archetype block
-  document.querySelectorAll('.lead-form__archetype-fields').forEach(function (el) {
-    el.style.display = (el.dataset.archetype === archetype) ? '' : 'none';
-  });
+  var select = document.getElementById('olf-service');
+  if (select && services.length) {
+    services.forEach(function (svc) {
+      var opt = document.createElement('option');
+      opt.value = svc;
+      opt.textContent = svc;
+      select.appendChild(opt);
+    });
 
-  // Populate service select if archetype === service
-  if (archetype === 'service') {
-    var select = document.getElementById('olf-service');
-    if (select && services.length) {
-      services.forEach(function (svc) {
-        var opt = document.createElement('option');
-        opt.value = svc;
-        opt.textContent = svc;
-        select.appendChild(opt);
-      });
-      // Add generic fallback
-      var other = document.createElement('option');
-      other.value = 'Other';
-      other.textContent = 'Other / Not Sure';
-      select.appendChild(other);
-    }
+    var other = document.createElement('option');
+    other.value = 'Other';
+    other.textContent = 'Other / Not Sure';
+    select.appendChild(other);
   }
 
   var form = document.getElementById('odooLeadForm');
@@ -824,9 +767,9 @@
       <!--
   partials/odoo-lead-form.html
   data-module="odoo-lead-form"
-  Archetype-aware: service | medical | artist
+  Service-site quote form for R Brothers Outdoor Services
   Wires to: /api/quote (functions/api/quote.js)
-  Build node sets: window.LEAD_FORM_ARCHETYPE, window.LEAD_FORM_SERVICES
+  Build node sets: window.LEAD_FORM_SERVICES
 -->
 <section class="lead-form-section" id="odoo-quote" data-module="odoo-lead-form">
   <div class="lead-form-container">
@@ -835,7 +778,7 @@
 
     <form id="odooLeadForm" class="lead-form" novalidate>
 
-      <!-- ── Core fields (all archetypes) ──────────────────────── -->
+      <!-- ── Contact details ───────────────────────────────────── -->
       <div class="lead-form__row">
         <div class="lead-form__field">
           <label for="olf-name">Name *</label>
@@ -852,77 +795,29 @@
         <input type="email" id="olf-email" name="email" autocomplete="email">
       </div>
 
-      <!-- ── Service archetype fields ───────────────────────────── -->
-      <div class="lead-form__archetype-fields" data-archetype="service" style="display:none">
-        <div class="lead-form__row">
-          <div class="lead-form__field">
-            <label for="olf-service">Service *</label>
-            <select id="olf-service" name="service">
-              <option value="" disabled selected>Select a service&hellip;</option>
-              <!-- Populated by window.LEAD_FORM_SERVICES at runtime -->
-            </select>
-          </div>
-          <div class="lead-form__field">
-            <label for="olf-address">Address</label>
-            <input type="text" id="olf-address" name="address" autocomplete="street-address">
-          </div>
+      <div class="lead-form__row">
+        <div class="lead-form__field">
+          <label for="olf-service">Service *</label>
+          <select id="olf-service" name="service" required>
+            <option value="" disabled selected>Select a service&hellip;</option>
+            <!-- Populated by window.LEAD_FORM_SERVICES at runtime -->
+          </select>
         </div>
         <div class="lead-form__field">
-          <label for="olf-date">Preferred Date</label>
-          <input type="date" id="olf-date" name="preferred_date">
+          <label for="olf-address">Address</label>
+          <input type="text" id="olf-address" name="address" autocomplete="street-address">
         </div>
       </div>
-
-      <!-- ── Medical archetype fields ──────────────────────────── -->
-      <div class="lead-form__archetype-fields" data-archetype="medical" style="display:none">
-        <div class="lead-form__row">
-          <div class="lead-form__field">
-            <label for="olf-insurance">Insurance Provider</label>
-            <input type="text" id="olf-insurance" name="insurance">
-          </div>
-          <div class="lead-form__field">
-            <label for="olf-visit-type">Visit Type *</label>
-            <select id="olf-visit-type" name="visit_type">
-              <option value="" disabled selected>Select&hellip;</option>
-              <option value="new">New Patient</option>
-              <option value="returning">Returning Patient</option>
-              <option value="consultation">Consultation</option>
-            </select>
-          </div>
-        </div>
-        <div class="lead-form__field">
-          <label for="olf-reason">Reason for Visit</label>
-          <textarea id="olf-reason" name="reason" rows="2"></textarea>
-        </div>
+      <div class="lead-form__field">
+        <label for="olf-date">Preferred Date</label>
+        <input type="date" id="olf-date" name="preferred_date">
       </div>
 
-      <!-- ── Artist archetype fields ───────────────────────────── -->
-      <div class="lead-form__archetype-fields" data-archetype="artist" style="display:none">
-        <div class="lead-form__row">
-          <div class="lead-form__field">
-            <label for="olf-project">Project Type</label>
-            <input type="text" id="olf-project" name="project_type" placeholder="e.g. wedding, corporate, birthday">
-          </div>
-          <div class="lead-form__field">
-            <label for="olf-budget">Budget Range</label>
-            <select id="olf-budget" name="budget_range">
-              <option value="" disabled selected>Select&hellip;</option>
-              <option value="under_500">Under $500</option>
-              <option value="500_1500">$500 – $1,500</option>
-              <option value="1500_3000">$1,500 – $3,000</option>
-              <option value="over_3000">$3,000+</option>
-            </select>
-          </div>
-        </div>
-      </div>
-
-      <!-- ── Notes (all archetypes) ────────────────────────────── -->
       <div class="lead-form__field">
         <label for="olf-message">Notes</label>
         <textarea id="olf-message" name="message" rows="3"></textarea>
       </div>
 
-      <!-- ── SMS consent ───────────────────────────────────────── -->
       <div class="lead-form__field lead-form__field--checkbox">
         <input type="checkbox" id="olf-sms" name="sms_consent" value="yes">
         <label for="olf-sms">I agree to receive text updates about my request. Reply STOP to opt out.</label>
@@ -937,30 +832,21 @@
 
 <script>
 (function () {
-  var archetype = (window.LEAD_FORM_ARCHETYPE || 'service').toLowerCase();
   var services  = window.LEAD_FORM_SERVICES || [];
 
-  // Show the right archetype block
-  document.querySelectorAll('.lead-form__archetype-fields').forEach(function (el) {
-    el.style.display = (el.dataset.archetype === archetype) ? '' : 'none';
-  });
+  var select = document.getElementById('olf-service');
+  if (select && services.length) {
+    services.forEach(function (svc) {
+      var opt = document.createElement('option');
+      opt.value = svc;
+      opt.textContent = svc;
+      select.appendChild(opt);
+    });
 
-  // Populate service select if archetype === service
-  if (archetype === 'service') {
-    var select = document.getElementById('olf-service');
-    if (select && services.length) {
-      services.forEach(function (svc) {
-        var opt = document.createElement('option');
-        opt.value = svc;
-        opt.textContent = svc;
-        select.appendChild(opt);
-      });
-      // Add generic fallback
-      var other = document.createElement('option');
-      other.value = 'Other';
-      other.textContent = 'Other / Not Sure';
-      select.appendChild(other);
-    }
+    var other = document.createElement('option');
+    other.value = 'Other';
+    other.textContent = 'Other / Not Sure';
+    select.appendChild(other);
   }
 
   var form = document.getElementById('odooLeadForm');
@@ -1134,6 +1020,6 @@
 </div>
 
 
-<script>window.LEAD_FORM_ARCHETYPE="service";window.LEAD_FORM_SERVICES=["Lawn Care", "Landscape Design", "Maintenance", "Spring Cleanup", "Fall Cleanup", "Snow Removal", "Fence Installation", "Sod Installation", "Tree Service"];</script>
+<script>window.LEAD_FORM_SERVICES=["Lawn Care", "Landscape Design", "Maintenance", "Spring Cleanup", "Fall Cleanup", "Snow Removal", "Fence Installation", "Sod Installation", "Tree Service"];</script>
 </body>
 </html>
